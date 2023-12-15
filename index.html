@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+    <title>🥟 饺子语言翻译器</title>
+
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="./codemirror-5.31.0/lib/codemirror.css" />
+    <script src="./codemirror-5.31.0/lib/codemirror.js"></script>
+    <script src="./codemirror-5.31.0/clike.js"></script>
+    <link rel="stylesheet" href="./codemirror-5.31.0/theme/myTheme.css" />
+    <link rel="stylesheet" href="./codemirror-5.31.0/addon/fold/foldgutter.css" />
+    <script src="./codemirror-5.31.0/addon/fold/foldcode.js"></script>
+    <script src="./codemirror-5.31.0/addon/fold/foldgutter.js"></script>
+    <script src="./codemirror-5.31.0/addon/fold/brace-fold.js"></script>
+    <script src="./codemirror-5.31.0/addon/fold/comment-fold.js"></script>
+    <script src="./codemirror-5.31.0/addon/edit/matchbrackets.js"></script>
+
+    <script src="./codemirror-5.31.0/addon/scroll/annotatescrollbar.js"></script>
+    <script src="./codemirror-5.31.0/addon/search/matchesonscrollbar.js"></script>
+    <script src="./codemirror-5.31.0/addon/search/match-highlighter.js"></script>
+    <script src="./codemirror-5.31.0/addon/search/jump-to-line.js"></script>
+
+    <script src="./codemirror-5.31.0/addon/dialog/dialog.js"></script>
+    <link rel="stylesheet" href="./codemirror-5.31.0/addon/dialog/dialog.css" />
+    <script src="./codemirror-5.31.0/addon/search/searchcursor.js"></script>
+    <script src="./codemirror-5.31.0/addon/search/search.js"></script>
+
+    <script src="./codemirror-5.31.0/jquery-3.3.1.js"></script>
+
+    <style type="text/css">
+        .title-container {
+            margin-top: -0.5em;
+            display: grid;
+            align-items: baseline;
+            grid-template-columns: 40% 60%;
+        }
+
+        .converter-container {
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: 39% 22% 39%;
+        }
+
+        .CodeMirror {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            font-size: 16px;
+            line-height: 20px;
+        }
+
+        .code-header {
+            background-color: rgb(149, 149, 151);
+            color: white;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 2px solid #F2F2F2;
+            font-size: 1.1rem;
+        }
+
+        .code-window-zhongwen {
+            background: #fff;
+            box-shadow: 0px 0px 10px rgb(0 0 0 / 16%);
+            margin: 1rem;
+            overflow: hidden;
+            border-radius: 1.0rem 0.2rem 0.2rem 1.0rem;
+        }
+
+        .code-window-buttons {
+            background: #fff;
+            box-shadow: 0px 0px 10px rgb(0 0 0 / 0%);
+            margin: 0rem;
+            overflow: hidden;
+            border-radius: 0.2rem;
+            vertical-align: middle;
+            display: flex;
+            flex-direction: column;
+            /* align-items: center; */
+            justify-content: center;
+        }
+
+        .code-window-jiaozi {
+            background: #fff;
+            box-shadow: 0px 0px 10px rgb(0 0 0 / 16%);
+            margin: 1rem;
+            overflow: hidden;
+            border-radius: 0.2rem 1.0rem 1.0rem 0.2rem;
+        }
+
+        .convert-button {
+            background-color: rgb(245, 223, 77);
+            color: rgb(55, 57, 72);
+            font-weight: 700;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition-duration: 0.5s;
+            overflow: hidden;
+        }
+
+        .convert-button:hover {
+            background-color: rgb(207, 195, 133);
+            background-color: rgba(245, 223, 77, 0.5);
+            color: rgb(55, 57, 72);
+        }
+
+        .convert-button:active {
+            background-color: rgb(110, 143, 112);
+            color: rgb(55, 57, 72);
+        }
+
+        /* 未访问的链接 */
+        a:link {
+            color: rgb(0, 0, 0);
+        }
+
+        /* 已访问的链接 */
+        a:visited {
+            color: rgb(0, 0, 0);
+        }
+
+        /* 鼠标悬停链接 */
+        a:hover {
+            color: rgb(76, 110, 133);
+        }
+    </style>
+</head>
+
+
+<body>
+    <div class="title-container">
+        <div>
+            <h1>🥟 饺子语言翻译器</h1>
+            &nbsp; by <a href="https://github.com/csy-tvgo" target="_blank">Karbon</a>
+        </div>
+    </div>
+
+    <div class="converter-container">
+
+        <div class="code-window-zhongwen">
+            <header class="code-header">
+                中文 &nbsp;
+                <button type="button" onclick="copyContent('zhongwen')">复制</button>
+            </header>
+            <textarea class="code-editor-zhongwen" id="editor-zhongwen">
+            </textarea>
+        </div>
+        <div class="code-window-buttons">
+            <a class="convert-button" href="javascript:execute_encode()">
+                <br />=== 🥟 饺子 ==><br /><br />
+            </a>
+            &nbsp;
+            <a class="convert-button" href="javascript:execute_decode()">
+                <br /> &lt;=== 解码 ====<br /><br />
+            </a>
+        </div>
+        <div class="code-window-jiaozi">
+            <header class="code-header">
+                🥟 饺子 &nbsp;
+                <button type="button" onclick="copyContent('jiaozi')">复制</button> &nbsp;
+            </header>
+            <textarea class="code-editor-jiaozi" id="editor-jiaozi">
+            </textarea>
+        </div>
+    </div>
+    <p align="right">
+        <small>
+            This page is open sourced on <a href="https://github.com/CSY-tvgo/Jiaozi-Encoder" target="_blank">
+                GitHub</a>.
+            &nbsp;&nbsp;
+        </small>
+    </p>
+
+    <script>
+
+        const my_theme = "myTheme"
+
+        var editor_zhongwen = CodeMirror.fromTextArea(document.getElementById("editor-zhongwen"), {
+            mode: "text/x-csrc",
+            lineNumbers: true,
+            theme: my_theme,
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            matchBrackets: true,
+            indentUnit: 4,
+            lineWrapping: true,
+        })
+        editor_zhongwen.setSize('auto', '30rem')
+        editor_zhongwen.setOption("value", "把你想转换的原文输入在这里，点击转换按钮后，右侧会显示饺子🥟！")
+
+        var editor_jiaozi = CodeMirror.fromTextArea(document.getElementById("editor-jiaozi"), {
+            mode: "text/x-csrc",
+            lineNumbers: true,
+            theme: my_theme,
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+            matchBrackets: true,
+            indentUnit: 4,
+            lineWrapping: true,
+        })
+        editor_jiaozi.setSize('auto', '30rem')
+        editor_jiaozi.setValue("// 请先在左侧两栏中准备好代码\n// 点击转换按钮后，这里会显示转换后的代码")
+
+        function isChinese(str) {
+            var reg = /[\u4e00-\u9fa5]/g;
+            return reg.test(str);
+        }
+
+        function Chinese_to_UTF8_BIN(str) {
+            hex = encodeURI(str).replaceAll('%', '');
+            binaryString = '';
+            for (let i = 0; i < hex.length; i += 2) {
+                const byte = parseInt(hex.substr(i, 2), 16);
+                binaryString += byte.toString(2).padStart(8, '0');
+            }
+            return binaryString;
+        }
+
+        function convert_zhongwen_to_jiaozi(code_zhongwen) {
+            var convert_result = ""
+            for (let i = 0; i < code_zhongwen.length; i++) {
+                if (isChinese(code_zhongwen[i])) {
+                    thisZhongwen = Chinese_to_UTF8_BIN(code_zhongwen[i]).replace(/1/g, "饺").replace(/0/g, "子")
+                    convert_result += thisZhongwen
+                }
+                else {
+                    convert_result += code_zhongwen[i]
+                }
+            }
+            return convert_result
+        }
+
+        function UTF8_BIN_to_Chinese(str) {
+            hex = ""
+            for (let i = 0; i < str.length; i += 8) {
+                const byte = parseInt(str.substr(i, 8), 2);
+                hex += '%' + byte.toString(16).padStart(2, '0');
+            }
+            console.log(hex)
+            ChineseString = decodeURI(hex);
+            return ChineseString;
+        }
+
+        function convert_jiaozi_to_zhongwen(code_jiaozi) {
+            var convert_result = ""
+            for (let i = 0; i < code_jiaozi.length; i++) {
+                if (code_jiaozi[i] == "饺" || code_jiaozi[i] == "子") {
+                    temp = code_jiaozi.substr(i, 24).replace(/饺/g, "1").replace(/子/g, "0")
+                    thisJiaozi = UTF8_BIN_to_Chinese(temp)
+                    convert_result += thisJiaozi
+                    i += 23
+                }
+                else {
+                    convert_result += code_jiaozi[i]
+                }
+            }
+            return convert_result
+        }
+
+        function execute_encode() {
+            var code_zhongwen = editor_zhongwen.getValue()
+            var code_jiaozi = convert_zhongwen_to_jiaozi(code_zhongwen)
+            editor_jiaozi.setValue(code_jiaozi)
+        }
+
+        function execute_decode() {
+            var code_jiaozi = editor_jiaozi.getValue()
+            var code_zhongwen = convert_jiaozi_to_zhongwen(code_jiaozi)
+            editor_zhongwen.setValue(code_zhongwen)
+        }
+
+        function copyContent(source) {
+            // Ref: https://www.30secondsofcode.org/articles/s/copy-text-to-clipboard-with-javascript
+            const el = document.createElement('textarea')
+            if (source == "zhongwen")
+                el.value = editor_zhongwen.getValue();
+            else if (source == "jiaozi")
+                el.value = editor_jiaozi.getValue();
+            else
+                return;
+            el.setAttribute('readonly', '')
+            el.style.position = 'absolute'
+            el.style.left = '-9999px'
+            document.body.appendChild(el)
+            el.select()
+            document.execCommand('copy')
+            document.body.removeChild(el)
+            alert("\n你点击了复制按钮！\n\n（有的浏览器能复制成功，有的不能）")
+        }
+
+    </script>
+
+</body>
+
+</html>
