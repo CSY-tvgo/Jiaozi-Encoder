@@ -144,7 +144,8 @@
 
         <div class="code-window-zhongwen">
             <header class="code-header">
-                中文 &nbsp;
+                中文 &nbsp; &nbsp;
+                <button type="button" onclick="clearContent('zhongwen')">清空</button> &nbsp; &nbsp;
                 <button type="button" onclick="copyContent('zhongwen')">复制</button>
             </header>
             <textarea class="code-editor-zhongwen" id="editor-zhongwen">
@@ -161,8 +162,9 @@
         </div>
         <div class="code-window-jiaozi">
             <header class="code-header">
-                🥟 饺子 &nbsp;
-                <button type="button" onclick="copyContent('jiaozi')">复制</button> &nbsp;
+                🥟 饺子 &nbsp; &nbsp;
+                <button type="button" onclick="clearContent('jiaozi')">清空</button> &nbsp; &nbsp;
+                <button type="button" onclick="copyContent('jiaozi')">复制</button>
             </header>
             <textarea class="code-editor-jiaozi" id="editor-jiaozi">
             </textarea>
@@ -291,6 +293,18 @@
             document.execCommand('copy')
             document.body.removeChild(el)
             alert("\n你点击了复制按钮！\n\n（有的浏览器能复制成功，有的不能）")
+        }
+
+        function clearContent(source) {
+            var yes = confirm("你确定要清空吗？")
+            if (yes == true) {
+                if (source == "zhongwen")
+                    editor_zhongwen.setValue("")
+                else if (source == "jiaozi")
+                    editor_jiaozi.setValue("")
+                else
+                    return;
+            }
         }
 
     </script>
